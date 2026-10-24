@@ -1,0 +1,30 @@
+step,problem,rows_affected,action,why
+2,EASE-MENT column empty,845607,drop column,carries no information (100% blank)
+3,building category: 91 raw labels -> 47,89769,"collapse repeated spaces, upper-case",otherwise one-hot encoding splits one category into two columns
+3,neighbourhood: 262 raw labels -> 262,0,"collapse repeated spaces, upper-case",same reason as building category
+4,borough stored as code 1-5,845607,decode to names,readable; 0 codes outside 1-5
+5,square feet stored as text with commas,400608,"strip commas, convert to numbers",cannot compute price per sq ft on text
+6,gross_sqft blank or 0,374853,set to missing,no building has 0 sq ft; 0 means 'not recorded' (condo/co-op units carry no floor area)
+6,land_sqft blank or 0,363663,set to missing,no building has 0 sq ft; 0 means 'not recorded' (condo/co-op units carry no floor area)
+7,sale date unparseable,0,left missing,-
+8,year built missing or 0,63344,set to missing,"0 is a placeholder, not a year"
+8,year built 1-1799 (impossible),11,set to missing,typos; no such building stock in NYC
+8,year built > 3 years after the sale,0,flag (year_built_suspect),"off-plan condo sales happen before completion, but >3 years is implausible"
+9,total units blank but parts present,0,total = residential + commercial,recovers a value the data already implies
+9,residential + commercial != total,6638,flag (units_inconsistent),"cannot tell which of the three numbers is wrong, so keep and flag"
+10,ZIP missing or 0,2864,set to missing,0 is not a ZIP code
+10,coordinates outside NYC,0,set to missing,geocoding error
+10,no latitude / longitude,23278,keep; excluded from toll-zone test only,"cannot place the sale on a map, but the sale itself is valid"
+11,BBL blank or 0,27900,set to missing (bbl_building),0 is not a BBL; borough-block-lot still identifies the parcel
+11,BBL differs from borough-block-lot (condo billing lot),209488,keep as bbl_building; add bbl_lot from borough-block-lot,"the BBL column is building-level, so it cannot separate condo units"
+12,exact duplicate rows (every column equal),3386,drop extra copies,the same sale recorded twice would be counted twice
+12,same lot+unit+address+date+price but other columns differ,94,"flag (possible_duplicate), keep","differences (e.g. units, class) mean we cannot tell which copy is right"
+13,sale price <= $100 (ownership transfer),271899,"flag nominal; exclude from price analysis, keep for transfer-share test (T4)",a deed transfer between relatives/entities is not a market price
+13,"sale price $101-$10,000",3366,flag low; exclude from price analysis,not a credible NYC market price for any property
+13,sale price > $100M,1083,"keep, analyse on log scale",real portfolio / trophy deals; log scale stops them dominating
+14,multi-lot deal: same borough+date+price on >= 2 lots of one block,34813,flag multi_lot_sale; exclude from per-sq-ft analysis,"the price is the total for several lots, so price / one lot's area is inflated"
+14,multi-lot deal: same borough+date+price on >= 6 lots,5553,flag multi_lot_sale; exclude from per-sq-ft analysis,"portfolio deals; below 6 lots across blocks, chance matches explain most groups"
+14,"price statistics: 566,956 market rows = 545,669 market deals",21287,flag first_in_transaction; price-level statistics use one row per deal,"the repeated rows carry the deal's total price, not their own"
+15,co-op / condo-billing-lot sale with the whole building's floor area,1142,no price per sq ft for these rows,the sale is one apartment (or co-op shares) but the area is the whole building (median $2-5 per sq ft)
+15,"condo unit with floor area (% of condo sales with area, by year: 2016 0.1%, 2017 0.1%, 2018 86.7%, 2019 7.0%, 2020 0.8%, 2021 1.1%, 2022 0.9%, 2023 0.6%, 2024 0.5%, 2025 0.4%)",18060,"keep area, but no price per sq ft for condo units","the measurement exists for one year only, so it is not comparable over time"
+16,toll-zone line check: Manhattan sales on East/West 50th-70th St,24072,line agrees with the street number for 100.00% of them,validates the coordinate approximation of '60th St and below'
