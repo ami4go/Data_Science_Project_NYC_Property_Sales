@@ -1,0 +1,10 @@
+step,rows,pct_of_raw
+Raw rows,845607,100.0
+After dropping exact duplicates,842221,99.6
+"Market sales (> $10,000)",566956,67.0
+... with floor area recorded,274197,32.4
+... not a multi-lot deal,265961,31.5
+... area describes the unit sold,265098,31.4
+... not a condo unit (area recorded mainly in 2018),252460,29.9
+... price per sq ft not an outlier,248627,29.4
+... year built known (P1 population),248409,29.4

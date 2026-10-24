@@ -1,0 +1,14 @@
+measure,before,after
+Rows,845607.0,842221
+Columns,29.0,55
+Blank cells (raw) / missing cells in the 28 kept original columns (cleaned),2639186.0,2097690
+  of which EASE-MENT (column dropped),845607.0,0
+"  hidden missing: 0 used as 'not recorded' (sq ft, year, ZIP, BBL)",314567.0,0
+Exact duplicate rows,3386.0,0
+Building-category labels,91.0,47
+Numeric columns stored as text,2.0,0
+"Market-price rows (before: > $100 raw; after: > $10,000, deduplicated)",571406.0,566956
+Market deals (a multi-lot deal counted once; used for price statistics),,545669
+Rows with a valid price per sq ft,,248627
+Flagged multi-lot deal rows,,35044
+Flagged price-per-sq-ft outliers,,3833

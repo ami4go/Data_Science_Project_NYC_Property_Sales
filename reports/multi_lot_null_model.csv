@@ -1,0 +1,5 @@
+,observed,expected_by_chance,flagged
+"Same block, 2+ lots",12473,543,yes
+"Different blocks, 2 lots",24557,26611,no
+"Different blocks, 3-5 lots",3544,2764,no
+"Different blocks, 6+ lots",100,8,yes
