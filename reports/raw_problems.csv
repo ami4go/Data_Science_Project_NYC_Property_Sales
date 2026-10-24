@@ -1,0 +1,24 @@
+problem,rows,pct_of_raw
+Sale price $0,262138,31.0
+Sale price $1-$100,12063,1.43
+Sale price <= $100 (total nominal),274201,32.43
+"Sale price $101-$10,000",3409,0.4
+Sale price > $100M,1084,0.13
+Sale price missing / not numeric,0,0.0
+Gross sq ft blank or 0,374853,44.33
+Land sq ft blank or 0,363663,43.01
+Sq ft stored as text with commas (gross),400608,47.38
+Total units blank,119362,14.12
+Residential + commercial != total (all three present),6638,0.78
+Year built missing or 0,63344,7.49
+Year built 1-1799 (impossible),11,0.0
+No latitude/longitude,23278,2.75
+ZIP missing or 0,2864,0.34
+Building category raw labels,91,
+Building category labels after whitespace fix,47,
+Neighbourhood raw labels,262,
+Neighbourhood labels after whitespace fix,262,
+EASE-MENT non-blank,0,0.0
+"Exact duplicate rows (all 29 columns), extra copies",3386,0.4
+"Repeated BBL+apartment+date+price, extra copies",17424,2.06
+Market sales (> $100),571406,67.57
