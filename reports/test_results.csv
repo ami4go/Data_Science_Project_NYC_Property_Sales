@@ -1,0 +1,22 @@
+test,variant,estimate,ci_low,ci_high,statistic,value,df,p_value,unit,matters_threshold,decision,note
+T1,main: paired t on neighbourhood x type cells,0.426235,-1.68308,2.58081,t,0.394017,366,0.346899,%,5,do not reject H0,does not matter: the whole interval is inside +/- the threshold
+T1,robustness: without year built 1935-1945,2.05737,-0.321882,4.49341,t,1.69803,346,0.0452009,%,5,reject H0,does not matter: the whole interval is inside +/- the threshold
+T1,alt: F-test for two variances (all sales),1.6005,,,F,1.6005,"(39876, 31158)",0,ratio,,reject equal variances,
+T1,"alt: pooled two-sample t (all sales, ignores neighbourhood)",7.11438,6.23195,8.00413,t,16.2838,71034,8.24155e-60,%,5,reject H0,
+T1,"alt: Welch two-sample t (all sales, ignores neighbourhood)",7.11438,6.25651,7.97916,t,16.7521,71024.7,3.61331e-63,%,5,reject H0,
+T2,main: $2M (tax step),22.5907,16.5032,28.6782,z,7.40637,-,6.4902e-14,pp,10,reject H0,matters: the whole interval is beyond the threshold
+T2,second window: $3M (tax step),17.5156,9.7627,25.2685,z,4.42978,-,4.71645e-06,pp,10,reject H0,unclear: the interval crosses the threshold
+T2,placebo: $1.5M (no step),1.66576,-3.14828,6.4798,z,0.675431,-,0.249701,pp,10,do not reject H0,does not matter: the whole interval is inside +/- the threshold
+T2,placebo: $2.5M (no step),0.469713,-6.24254,7.18196,z,0.137043,-,0.445499,pp,10,do not reject H0,does not matter: the whole interval is inside +/- the threshold
+T2,alt: chi-square independence 2x2 at $2M (two-sided),54.8543,,,chi2,54.8543,1,1.29804e-13,-,,reject H0,chi-square = z squared
+T3,borough gap vs building-mix expectation: Bronx,-4.91684,-5.54427,-4.28941,-,,-,,pp,2,-,matters: the whole interval is beyond the threshold
+T3,borough gap vs building-mix expectation: Brooklyn,1.95655,1.60148,2.31161,-,,-,,pp,2,-,unclear: the interval crosses the threshold
+T3,borough gap vs building-mix expectation: Manhattan,-0.159514,-0.499622,0.180594,-,,-,,pp,2,-,does not matter: the whole interval is inside +/- the threshold
+T3,borough gap vs building-mix expectation: Queens,1.40662,1.07321,1.74004,-,,-,,pp,2,-,does not matter: the whole interval is inside +/- the threshold
+T3,borough gap vs building-mix expectation: Staten Island,-5.50621,-6.08696,-4.92545,-,,-,,pp,2,-,matters: the whole interval is beyond the threshold
+T3,main: chi-square goodness of fit (borough counts vs building-mix expectation),461.331,,,chi2,461.331,4,1.54208e-98,-,2,reject H0,2 of 5 boroughs differ from expectation by >= 2 pp
+T3,"alt: chi-square independence borough x transfer (raw, mixes building type)",4472.5,,,chi2,4472.5,4,0,-,,reject H0,raw spread 16.6 pp
+T4,main: paired t on neighbourhood x type cells,-15.4505,-19.5002,-11.1972,t,-6.73844,224,1.33667e-10,%,5,reject H0,matters: the whole interval is beyond the threshold
+T4,alt: F-test for two variances (all sales),2.22743,,,F,2.22743,"(3230, 67845)",1.57774e-278,ratio,,reject equal variances,
+T4,"alt: pooled two-sample t (all sales, ignores neighbourhood)",-9.33732,-11.1082,-7.53116,t,-9.73988,71075,2.1048e-22,%,5,reject H0,
+T4,"alt: Welch two-sample t (all sales, ignores neighbourhood)",-9.33732,-11.8671,-6.73489,t,-6.79121,3369.5,1.30898e-11,%,5,reject H0,

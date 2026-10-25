@@ -1,0 +1,168 @@
+
+===== 01_audit_raw.py =====
+SHA-256 cf8d76c13ed5774c6a04193147c24ebf3f3e118cd2b10eefc096c6d0800c24a8
+raw shape: 845,607 rows x 29 columns  (= 24,522,603 cells)
+                                   column  blank  blank_pct   zero  n_unique  has_commas  parses_as_number_pct            min           max                       example
+                                  BOROUGH      0       0.00      0         5           0                100.00       1.000000  5.000000e+00                             1
+                             NEIGHBORHOOD      0       0.00      0       262           0                  0.00            NaN           NaN                     CHINATOWN
+                  BUILDING CLASS CATEGORY      0       0.00      0        91           0                  0.00            NaN           NaN 47 CONDO NON-BUSINESS STORAGE
+               TAX CLASS AS OF FINAL ROLL   4183       0.49      0        11           0                 90.54            NaN           NaN                             4
+                                    BLOCK      0       0.00      0     13482           0                100.00       1.000000  1.635000e+04                           172
+                                      LOT      0       0.00      0      5429           0                100.00       1.000000  9.139000e+03                          1490
+                                EASE-MENT 845607     100.00      0         0           0                  0.00            NaN           NaN                              
+          BUILDING CLASS AS OF FINAL ROLL   4183       0.49      0       204           0                  0.00            NaN           NaN                            RS
+                                  ADDRESS      0       0.00      0    623244      240001                  0.00            NaN           NaN       50 FRANKLIN STREET, S9B
+                         APARTMENT NUMBER 636744      75.30      0     18567           2                 18.04            NaN           NaN                           S9B
+                                 ZIP CODE     67       0.01   2797       209           0                100.00       0.000000  1.169700e+04                         10013
+                        RESIDENTIAL UNITS 133666      15.81 110772       391           0                100.00       0.000000  8.764000e+03                             0
+                         COMMERCIAL UNITS 211747      25.04 565759       159           0                100.00       0.000000  2.261000e+03                             1
+                              TOTAL UNITS 119362      14.12  76962       429           0                100.00       0.000000  8.812000e+03                             1
+                         LAND SQUARE FEET 226053      26.73 137610     21171      430967                100.00       0.000000  1.985040e+07                             0
+                        GROSS SQUARE FEET 226048      26.73 148805     20785      400608                100.00       0.000000  8.942176e+06                             0
+                               YEAR BUILT  39410       4.66  23934       211           0                100.00       0.000000  2.025000e+03                          2007
+                TAX CLASS AT TIME OF SALE      0       0.00      0         4           0                100.00       1.000000  4.000000e+00                             4
+           BUILDING CLASS AT TIME OF SALE      0       0.00      0       203           0                  0.00            NaN           NaN                            RS
+                               SALE PRICE      0       0.00 262138     51160           0                100.00       0.000000  2.397502e+09                       1590000
+                                SALE DATE      0       0.00      0      3651           0                  0.00            NaN           NaN                    06/21/2019
+                                 Latitude  23278       2.75      0    209035           0                100.00      40.498887  4.091287e+01                     40.716951
+                                Longitude  23278       2.75      0    232339           0                100.00     -74.254937 -7.370038e+01                      -74.0025
+                          Community Board  23277       2.75      0        64           0                100.00     101.000000  5.950000e+02                           101
+                         Council District  23277       2.75      0        51           0                100.00       1.000000  5.100000e+01                             1
+                                      BIN  26479       3.13      0    356498           0                100.00 1000000.000000  5.516445e+06                       1088222
+                                      BBL  26479       3.13   1421    348029           0                100.00       0.000000  5.080500e+09                    1001727504
+                        Census Tract 2020  23024       2.72      0      1454           0                100.00       1.000000  1.579030e+05                            31
+Neighborhood Tabulation Area (NTA) (2020)  23024       2.72      0       216           0                  0.00            NaN           NaN                        MN0102
+
+                                              problem   rows  pct_of_raw
+                                        Sale price $0 262138       31.00
+                                   Sale price $1-$100  12063        1.43
+                   Sale price <= $100 (total nominal) 274201       32.43
+                              Sale price $101-$10,000   3409        0.40
+                                   Sale price > $100M   1084        0.13
+                     Sale price missing / not numeric      0        0.00
+                               Gross sq ft blank or 0 374853       44.33
+                                Land sq ft blank or 0 363663       43.01
+             Sq ft stored as text with commas (gross) 400608       47.38
+                                    Total units blank 119362       14.12
+Residential + commercial != total (all three present)   6638        0.78
+                              Year built missing or 0  63344        7.49
+                       Year built 1-1799 (impossible)     11        0.00
+                                No latitude/longitude  23278        2.75
+                                     ZIP missing or 0   2864        0.34
+                         Building category raw labels     91         NaN
+        Building category labels after whitespace fix     47         NaN
+                             Neighbourhood raw labels    262         NaN
+            Neighbourhood labels after whitespace fix    262         NaN
+                                  EASE-MENT non-blank      0        0.00
+  Exact duplicate rows (all 29 columns), extra copies   3386        0.40
+      Repeated BBL+apartment+date+price, extra copies  17424        2.06
+                                Market sales (> $100) 571406       67.57
+----- 01_audit_raw.py done in 66s
+
+===== 02_clean.py =====
+[ 2] EASE-MENT column empty: 845,607 rows -> drop column
+[ 3] building category: 91 raw labels -> 47: 89,769 rows -> collapse repeated spaces, upper-case
+[ 3] neighbourhood: 262 raw labels -> 262: 0 rows -> collapse repeated spaces, upper-case
+[ 4] borough stored as code 1-5: 845,607 rows -> decode to names
+[ 5] square feet stored as text with commas: 400,608 rows -> strip commas, convert to numbers
+[ 6] gross_sqft blank or 0: 374,853 rows -> set to missing
+[ 6] land_sqft blank or 0: 363,663 rows -> set to missing
+[ 7] sale date unparseable: 0 rows -> left missing
+[ 8] year built missing or 0: 63,344 rows -> set to missing
+[ 8] year built 1-1799 (impossible): 11 rows -> set to missing
+[ 8] year built > 3 years after the sale: 0 rows -> flag (year_built_suspect)
+[ 9] total units blank but parts present: 0 rows -> total = residential + commercial
+[ 9] residential + commercial != total: 6,638 rows -> flag (units_inconsistent)
+[10] ZIP missing or 0: 2,864 rows -> set to missing
+[10] coordinates outside NYC: 0 rows -> set to missing
+[10] no latitude / longitude: 23,278 rows -> keep; excluded from toll-zone test only
+[11] BBL blank or 0: 27,900 rows -> set to missing (bbl_building)
+[11] BBL differs from borough-block-lot (condo billing lot): 209,488 rows -> keep as bbl_building; add bbl_lot from borough-block-lot
+[12] exact duplicate rows (every column equal): 3,386 rows -> drop extra copies
+[12] same lot+unit+address+date+price but other columns differ: 94 rows -> flag (possible_duplicate), keep
+[13] sale price <= $100 (ownership transfer): 271,899 rows -> flag nominal; exclude from price analysis, keep for transfer-share test (T4)
+[13] sale price $101-$10,000: 3,366 rows -> flag low; exclude from price analysis
+[13] sale price > $100M: 1,083 rows -> keep, analyse on log scale
+[14] multi-lot deal: same borough+date+price on >= 2 lots of one block: 34,813 rows -> flag multi_lot_sale; exclude from per-sq-ft analysis
+[14] multi-lot deal: same borough+date+price on >= 6 lots: 5,553 rows -> flag multi_lot_sale; exclude from per-sq-ft analysis
+[14] price statistics: 566,956 market rows = 545,669 market deals: 21,287 rows -> flag first_in_transaction; price-level statistics use one row per deal
+[15] co-op / condo-billing-lot sale with the whole building's floor area: 1,142 rows -> no price per sq ft for these rows
+[15] condo unit with floor area (% of condo sales with area, by year: 2016 0.1%, 2017 0.1%, 2018 86.7%, 2019 7.0%, 2020 0.8%, 2021 1.1%, 2022 0.9%, 2023 0.6%, 2024 0.5%, 2025 0.4%): 18,060 rows -> keep area, but no price per sq ft for condo units
+[16] toll-zone line check: Manhattan sales on East/West 50th-70th St: 24,072 rows -> line agrees with the street number for 100.00% of them
+
+clean: 842,221 rows x 54 columns -> sales_clean.pkl
+----- 02_clean.py done in 47s
+
+===== 03_split.py =====
+rows: exploration 590,043, confirmation 252,178; 50 borough-year strata, exploration share per stratum 0.698-0.710
+exploration: price-per-sq-ft outliers 2,746 of 176,861
+confirmation: price-per-sq-ft outliers 1,087 of 75,599
+----- 03_split.py done in 12s
+
+===== 04_tables.py =====
+                            observed  expected_by_chance flagged
+Same block, 2+ lots            12473                 543     yes
+Different blocks, 2 lots       24557               26611      no
+Different blocks, 3-5 lots      3544                2764      no
+Different blocks, 6+ lots        100                   8     yes
+                                               step   rows  pct_of_raw
+                                           Raw rows 845607       100.0
+                    After dropping exact duplicates 842221        99.6
+                           Market sales (> $10,000) 566956        67.0
+                       ... with floor area recorded 274197        32.4
+                           ... not a multi-lot deal 265961        31.5
+                   ... area describes the unit sold 265098        31.4
+... not a condo unit (area recorded mainly in 2018) 252460        29.9
+                 ... price per sq ft not an outlier 248627        29.4
+               ... year built known (P1 population) 248409        29.4
+# Size check (rows x columns >= 3,000,000)
+
+* Raw: 845,607 rows x 29 columns = 24,522,603 cells.
+* Cleaned (all rows, flags kept): 842,221 rows x 55 columns.
+* Encoded model table (market sales only): 566,956 rows x 71 columns (15 numeric/derived + 5 borough + 47 building_category + 4 tax_class_at_sale one-hot) = 40,253,876 cells = 13.4 x the 3,000,000 minimum.
+* Adding neighbourhood one-hot (261 levels) gives 332 columns = 188,229,392 cells.
+* Step that clears 3M: already the raw table does; encoding the 3 categoricals adds 53 columns.
+* Smallest test population (P1, price per sq ft with year built): 248,409 x 71 = 17,637,039 cells.
+                                                                    measure    before   after
+                                                                       Rows  845607.0  842221
+                                                                    Columns      29.0      55
+Blank cells (raw) / missing cells in the 28 kept original columns (cleaned) 2639186.0 2097690
+                                        of which EASE-MENT (column dropped)  845607.0       0
+           hidden missing: 0 used as 'not recorded' (sq ft, year, ZIP, BBL)  314567.0       0
+                                                       Exact duplicate rows    3386.0       0
+                                                   Building-category labels      91.0      47
+                                             Numeric columns stored as text       2.0       0
+     Market-price rows (before: > $100 raw; after: > $10,000, deduplicated)  571406.0  566956
+    Market deals (a multi-lot deal counted once; used for price statistics)       NaN  545669
+                                          Rows with a valid price per sq ft       NaN  248627
+                                                Flagged multi-lot deal rows       NaN   35044
+                                           Flagged price-per-sq-ft outliers       NaN    3833
+----- 04_tables.py done in 25s
+
+===== 05_eda.py =====
+exploration rows 590,043; market rows 397,390 = 382,004 deals; valid price per sq ft 174,115
+
+f01_price_classes: 30.8% of recorded sales are $0 and 32.3% are <= $100 (deed transfers, not prices), so price statistics must exclude them. Counting each multi-lot deal once (382,004 market deals), prices have median $738K, IQR $456K-$1.2M and max $2.4B: right-skewed over five orders of magnitude, so we analyse log price and use rank-based alternatives.
+
+f02_transfer_share_by_borough: Nominal transfers range from 21.2% of recorded sales in Manhattan to 37.5% in Brooklyn (16.4 percentage points apart, well beyond the 2-point threshold): motivates T4 (chi-square test of independence).
+
+f03_missingness: Gross floor area is missing for 44.4% of sales, but that is 95% of condo/co-op unit sales vs 5% of other sales: it is missing by design (the area belongs to the building, not the unit), not at random. Per-sq-ft results therefore speak for houses, rental and commercial buildings, not apartments; we do not impute it.
+
+f04_year_built_heaping: 60.8% of parcels have a year built ending in 0 or 5 (20% expected without rounding); 37.9% end in 0. Among pre-1940 parcels it is 73.2%. 1940 itself holds 12,337 parcels vs 540 in 1939, so a building recorded as 1940 may really be pre-war: T1 needs a sensitivity check with the cutoff moved (e.g. drop 1935-1945).
+
+f05_price_trends: Manhattan has the highest median deal price every year ($999K-$1.2M), the obvious answer, but from 2016 to 2025 it rose 22% vs 48-71% in the other boroughs. Indexed to 2019, Manhattan's price per sq ft was 107 in 2021 vs 116 for the Brooklyn-Queens average and 81 vs 128 in 2025 (P2; 1-3 family and rental buildings only, so the type mix is the same every year). Caveat: Manhattan has only 270-567 such sales a year in this set (its market is condos and co-ops, which carry no area), so T2 uses log price of like-for-like apartment sales instead.
+
+f06_prewar_vs_newer: Pooled over the city, pre-war residential buildings sell for +6.6% per sq ft (geometric mean) vs newer ones, but within the same neighbourhood and building type the median pre-war premium is +1.6% across 383 cells (57% of cells positive, IQR -6% to +11%). Holding location and type fixed moves the gap from +6.6% to +1.6%, near the 5% 'matters' threshold, so the answer could go either way: P1 is not obvious, and T1 must compare like with like.
+
+f07_size_vs_price: Spearman rho = 0.49 between floor area and price for 153,157 1-3 family sales: bigger homes do cost more (the obvious question), but only moderately, since location varies more than size. Price per sq ft falls with size (rho = -0.26), so per-sq-ft comparisons must hold building type (and so size) fixed.
+
+f08_sales_volume: Market deals in Apr-Jun 2020 were -48% vs Apr-Jun 2019; the busiest month was 2021-08 (4,763 deals in this 70% set). The COVID period changes which properties sell, a composition effect P2 must keep in mind; transfers track market deals month to month.
+
+f09_top_neighbourhoods: Among neighbourhoods with >= 100 residential per-sq-ft sales, Greenwich Village-West (Manhattan) is priciest at $2,020/sq ft; 8 of the top 15 are in Manhattan and 7 in Brooklyn. Neighbourhood explains far more than borough, so tests should condition on it.
+
+f10_toll_zone: 54% of geocoded Manhattan market deals fall inside the zone. Counting each deal once, the median price inside went $1.25M -> $1.27M (+1.6%) from 2024 to 2025, outside $1.07M -> $1.15M (+6.6%). Counting every lot of multi-lot deals would instead show +10.4% inside vs +5.1% outside; the largest, one $170M deal repeated on 280 lots in 2025, weighs as 280 sales, so price statistics use one row per deal. Quarterly medians are noisy (880-1,443 deals per cell), and the condo/co-op mix differs inside and outside, so T3 compares like types.
+
+f11_price_by_borough: Median deal price: Manhattan $1.2M, Brooklyn $885K, Queens $620K, Bronx $514K, Staten Island $569K. The boxes overlap heavily, so borough alone is a weak summary of price.
+
+f12_correlations: Log price rises with floor area (rho = 0.51) and units (rho = 0.26); year built vs log $/sq ft is only rho = -0.14 citywide, and latitude/longitude vs log $/sq ft are -0.03/-0.02: location matters (f09) but not in a straight line north-south, so it must enter as neighbourhood, not coordinates. Rank correlations (pairwise complete, multi-lot rows left out) because every variable is skewed; associations, not causes.
+----- 05_eda.py done in 18s
