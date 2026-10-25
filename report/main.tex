@@ -1,0 +1,603 @@
+%=======================================================================
+%  CSE558 Data Science - Midterm Project Report
+%  Monsoon 2026, IIIT-Delhi
+%
+%  Built on the course template (CSE558_Project_Report_Template.tex).
+%  Figures come from ../figures/*.pdf, written by run_all.py at the exact
+%  column width (83.5 mm), so they are not rescaled here.
+%  Text still in LIGHT BLUE is a placeholder that must be replaced.
+%  Compile with pdfLaTeX (Overleaf's default setting works), twice.
+%=======================================================================
+\documentclass[10pt,a4paper,twocolumn]{article}
+
+%========================= EDIT THIS =========================
+% Your project title: it sets the heading AND the PDF's title.
+\newcommand{\projecttitle}{Do pre-war buildings still sell at a premium?
+  Evidence from 845,607 New York City property sales}
+\newif\ifshowhints
+\showhintsfalse     % \showhintstrue shows every grey instruction line
+%=============================================================
+
+%-------------------------------------------- fonts (no need to edit)
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \IfFileExists{carlito.sty}%
+    {\usepackage[sfdefault]{carlito}}%              Calibri look
+    {\usepackage[scaled=0.92]{helvet}\renewcommand{\familydefault}{\sfdefault}}%
+  \usepackage{courier}
+\else
+  \usepackage[no-math]{fontspec}
+  \setmainfont{Carlito}[Extension=.ttf, UprightFont=*-Regular, BoldFont=*-Bold,
+    ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+\fi
+
+%----------------------------------------------------------- packages
+\usepackage[margin=18mm,bottom=20mm,columnsep=7mm]{geometry}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{needspace}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={\projecttitle},
+            pdfsubject={CSE558 Data Science, Monsoon 2026: Midterm Project Report}}
+
+%------------------------------------------------------------- layout
+\definecolor{eg}{HTML}{7396C4}         % worked example (light blue)
+\definecolor{hintgrey}{gray}{0.58}     % instructions (light grey)
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{12pt}{3pt}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{2pt}
+\newcommand{\sectionbreak}{\needspace{10\baselineskip}}
+\newcommand{\subsectionbreak}{\needspace{10\baselineskip}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist{leftmargin=1.2em, itemsep=2pt, topsep=2pt, parsep=0pt}
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{4pt}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{K}[1]{>{\raggedright\arraybackslash\bfseries\boldmath}p{#1}}  % bold labels
+
+%--------------------------------------------------------- shorthands
+% Instruction line. Delete these as you fill the template in.
+\newcommand{\hint}[1]{\ifshowhints{\footnotesize\itshape\color{hintgrey}#1\par}\fi}
+% Worked example: inline or in a table cell. REPLACE the contents.
+\newcommand{\eg}[1]{\textcolor{eg}{#1}}
+% Worked example running over a whole paragraph.
+\newcommand{\egblock}[1]{{\color{eg}#1\par}}
+% Bold label followed by an example.
+\newcommand{\field}[2]{\textbf{#1}~\eg{#2}\par}
+% Part a)-c) of a test, and a small bold heading.
+\newcommand{\tpart}[2]{\par\needspace{12\baselineskip}\smallskip\textbf{#1)~#2}\par}
+\newcommand{\minihead}[1]{\par\needspace{8\baselineskip}\smallskip\textbf{#1}\par}
+% Column and file names.
+\newcommand{\code}[1]{\texttt{#1}}
+% \figfile{file}{height}: your plot, or a labelled box until the file exists.
+\newcommand{\figfile}[2]{%
+  \IfFileExists{#1}%
+    {\includegraphics[width=\linewidth,height=#2,keepaspectratio]{#1}}%
+    {\fbox{\parbox[c][#2][c]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+      {\centering\small\itshape\color{hintgrey}Your plot: \detokenize{#1}}}}}
+% Our own real-content label (black, unlike \field which is a placeholder).
+\newcommand{\lab}[2]{\textbf{#1}~#2\par}
+% Figures live in ../figures/ in the repo, or in figures/ next to main.tex on Overleaf.
+\newcommand{\figdir}{../figures/}
+\IfFileExists{figures/f00_analysis_funnel.pdf}{\renewcommand{\figdir}{figures/}}{}
+
+%=======================================================================
+\begin{document}
+
+\twocolumn[%
+{\small\bfseries CSE558 Data Science\ \ \textbullet\ \ Midterm Project Report\ \ \textbullet\ \ Monsoon 2026\par}
+\vspace{4pt}
+{\LARGE\bfseries\raggedright\projecttitle\par}
+\vspace{6pt}
+\rule{\linewidth}{1pt}
+
+{\small
+\begin{tabularx}{\linewidth}{@{}K{2.4cm} Y@{}}
+\toprule
+Group name & \eg{TODO group name} \\
+Dataset & \href{https://data.cityofnewyork.us/City-Government/NYC-Citywide-Annualized-Calendar-Sales-Update/w2pb-icbu}{data.cityofnewyork.us, dataset w2pb-icbu} (NYC Department of Finance, \emph{NYC Citywide Annualized Calendar Sales Update}) \\
+Code & \href{https://github.com/ami4go/Data_Science_Project_NYC_Property_Sales}{github.com/ami4go/Data\_Science\_Project\_NYC\_Property\_Sales} (scripts, README, frozen data link) \\
+\bottomrule
+\end{tabularx}}
+
+\vspace{2pt}
+{\small
+\begin{tabularx}{\linewidth}{@{}L{0.5cm} L{3.4cm} L{2.3cm} L{4.8cm} Y@{}}
+\toprule
+\textbf{\#} & \textbf{Name} & \textbf{Roll no.} & \textbf{Institute email} & \textbf{Contribution} \\
+\midrule
+1 & \eg{TODO} & \eg{TODO} & \eg{TODO} & Dataset, raw audit and size check (1) \\
+2 & \eg{TODO} & \eg{TODO} & \eg{TODO} & Cleaning, multi-lot rule and the 70/30 split; before and after (2, 3) \\
+3 & \eg{TODO} & \eg{TODO} & \eg{TODO} & EDA figures and problem statements (4) \\
+4 & \eg{TODO} & \eg{TODO} & \eg{TODO} & Test plan; Tests 1--2: pre-war premium and mansion tax (5) \\
+5 & \eg{TODO} & \eg{TODO} & \eg{TODO} & Tests 3--4: transfers and mixed use; limitations, report and README (5, 6) \\
+\bottomrule
+\end{tabularx}}
+\vspace{12pt}
+]
+
+%-----------------------------------------------------------------------
+\section{Dataset}
+
+\lab{Source:}{NYC Department of Finance, \emph{NYC Citywide Annualized Calendar Sales Update},
+NYC Open Data (dataset \code{w2pb-icbu}), downloaded on 20 October 2026 and frozen, because the
+city keeps updating it (SHA-256 \code{cf8d76c1\ldots}; the code refuses any other file). One row
+is one recorded sale: a deed on one tax lot, dated 1 Jan 2016 to 31 Dec 2025.}
+
+\lab{What is raw about it:}{31.0\% of the ``sales'' are \$0 ownership transfers; floor and land
+area are stored as text with commas (\code{"55,000"}) and are 0 or blank in 44.3\% of rows; one
+building category is spelled two ways (91 labels for 47 types); the borough is a code from 1 to 5;
+the \code{EASE-MENT} column is entirely blank; 3,386 rows are exact duplicates; and a deal covering
+several lots repeats its \emph{total} price on every lot. Prices run from \$0 to \$2.4 billion.}
+
+{\small
+\begin{tabularx}{\linewidth}{@{}L{3.0cm} Y Y@{}}
+\toprule
+ & \textbf{Raw file} & \textbf{After encoding} \\
+\midrule
+Instances (rows) & 845,607 & 566,956 market sales \\
+Attributes (columns) & 29 & 71 \\
+Instances $\times$ attributes & 24,522,603 & 40,253,876 \\
+\bottomrule
+\end{tabularx}}
+
+\lab{Size check:}{$566{,}956\times71=40{,}253{,}876\ge3{,}000{,}000$ (13.4 times the minimum).
+The raw table already clears 3M; one-hot encoding borough (5 levels), building category (47) and
+tax class (4) adds 53 columns to 15 numeric and derived ones. Even our smallest test population,
+the 248,409 sales behind P1, gives $248{,}409\times71=17.6$M.}
+
+\minihead{Key features}
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{2.6cm} L{1.4cm} Y@{}}
+\toprule
+\textbf{Feature} & \textbf{Type} & \textbf{Real-world meaning} \\
+\midrule
+\code{sale\_price} & continuous & recorded price, US\$; response for P2--P4 \\
+\code{price\_per\_sqft} & continuous & derived: price / gross floor area; response for P1 \\
+\code{gross\_sqft} & continuous & floor area of the building, sq ft \\
+\code{year\_built} & discrete & assessor's year built; pre-war = before 1940 \\
+\code{total\_units} & discrete & residential + commercial units on the lot \\
+\code{borough} & nominal & 5 boroughs \\
+\code{neighborhood} & nominal & 262 assessor neighbourhoods \\
+\code{building\_category} & nominal & 47 types, e.g.\ one-family, condo elevator apartment \\
+\code{latitude}, \code{longitude} & continuous & location; used for the toll-zone flag \\
+\code{sale\_date} & date & 2016-01-01 to 2025-12-31 \\
+\bottomrule
+\end{tabularx}}
+
+%-----------------------------------------------------------------------
+% The template's \needspace before sections over-reserves here and would leave
+% page 1 half empty, so it is switched off for this one heading.
+{\let\sectionbreak\relax\section{Data preparation}}
+
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{1.95cm} L{2.2cm} Y@{}}
+\toprule
+\textbf{Issue found} & \textbf{What we did} & \textbf{Why, and not the alternative} \\
+\midrule
+\$0--\$100 sales (274,201; 32.4\%)
+ & flagged \emph{nominal}; kept only for the transfer test (T3)
+ & transfers between relatives or companies are not prices; deleting them would make T3 impossible \\
+Area stored as text (\code{"55,000"})
+ & commas removed, converted to numbers
+ & a format fix; nothing is lost \\
+Floor area 0 or blank (374,853; 44.3\%)
+ & 0 set to missing; \textbf{not imputed}
+ & missing by design: 95\% of condo/co-op unit sales lack it vs 5\% of others (Fig.~\ref{fig:missing}); imputing would invent P1's denominator \\
+\bottomrule
+\end{tabularx}}
+
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{1.95cm} L{2.2cm} Y@{}}
+\toprule
+\textbf{Issue found} & \textbf{What we did} & \textbf{Why, and not the alternative} \\
+\midrule
+91 category labels for 47 types
+ & spaces collapsed, upper-cased
+ & otherwise one-hot encoding splits one type into two columns \\
+3,386 exact duplicate rows
+ & dropped
+ & a sale counted twice inflates counts and shrinks p-values \\
+Multi-lot deals (35,044 rows): one deed repeats its total price on every lot
+ & flagged; no price per sq ft; price statistics use one row per deal (566,956 rows $=$ 545,669 deals)
+ & a null model separates real deals from same-day coincidences (Fig.~\ref{fig:nullmodel}); counting lots instead of deals flips the toll-zone comparison (Fig.~\ref{fig:toll}) \\
+Year built 0 or before 1800 (63,355)
+ & set to missing; excluded from P1 only
+ & placeholders and typos; the sales are valid for other questions \\
+Year built heaped on round years (Fig.~\ref{fig:heaping})
+ & kept; T1 is repeated without 1935--1945
+ & dropping rounded years would remove most pre-war stock \\
+Price per sq ft outliers (3,833)
+ & flagged outside $3\times$IQR fences on log \$/sq ft per building type, \textbf{fitted on the exploration set only}
+ & per type because levels differ; fitted like a scaler, so the confirmation set is not looked at \\
+Prices above \$100M (1,083)
+ & kept; analysed on a log scale
+ & real trophy and portfolio deals; trimming them deletes real sales \\
+Toll zone (Manhattan, 60th St and below) is not a column
+ & flag from coordinates, on a line fitted to the rotated street grid
+ & all 24,072 sales on East/West 50th--70th St land on the correct side \\
+Nominal columns
+ & one-hot: borough, building category, tax class
+ & label codes would impose a fake order \\
+\bottomrule
+\end{tabularx}}
+
+\begin{figure}[!ht]
+  \figfile{\figdir f00b_multi_lot_null_model.pdf}{5.3cm}
+  \caption{Same-block lot groups sharing a day and price are real multi-lot deals (12,473 observed
+  vs 543 when sale dates are shuffled); two-lot matches across blocks are coincidence (24,557 vs
+  26,611), so they are not flagged.}
+  \label{fig:nullmodel}
+\end{figure}
+
+%-----------------------------------------------------------------------
+\section{What changed after preparation}
+
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{3.3cm} L{1.4cm} Y@{}}
+\toprule
+\textbf{Measure} & \textbf{Before} & \textbf{After} \\
+\midrule
+Rows & 845,607 & 842,221 \\
+Attributes & 29 & 55 (28 kept + 27 derived or flags) \\
+Exact duplicate rows & 3,386 & 0 \\
+Building-category labels & 91 & 47 \\
+Numbers stored as text & 2 columns & 0 \\
+Hidden missing (0 meaning ``not recorded'') & 314,567 & 0 (now explicit) \\
+Market-price rows & 571,406 (\textgreater\ \$100) & 566,956 (\textgreater\ \$10,000) $=$ 545,669 deals \\
+Rows with a valid price per sq ft & -- & 248,627 \\
+\bottomrule
+\end{tabularx}}
+
+Missing cells \emph{rise} from 1,793,579 to 2,097,690 (excluding the dropped blank column),
+because 314,567 zeros that meant ``not recorded'' are now marked missing; left as 0 they would
+bias every mean. We lost only the 3,386 duplicate rows outright, but each question can use fewer:
+price analyses drop the 32.4\% transfers, and price per sq ft is defined for 29.4\% of raw rows
+(Fig.~\ref{fig:funnel}), so P1 speaks for houses and rental buildings, not apartments.
+
+\begin{figure}[!ht]
+  \figfile{\figdir f00_analysis_funnel.pdf}{5.8cm}
+  \caption{Only 29\% of raw rows can answer a price-per-sq-ft question: transfers remove a third,
+  and missing floor area another 35\%.}
+  \label{fig:funnel}
+\end{figure}
+
+%-----------------------------------------------------------------------
+\section{Basic questions and problem statement}
+
+\lab{Split before exploring:}{70\% exploration / 30\% confirmation, \textbf{seed 42}, stratified
+by borough $\times$ sale year (50 strata; exploration share 0.698--0.710 in each), with all lots of
+one deal in the same half: 590,043 and 252,178 rows. All figures in this section use the
+exploration set; the tests in Section~\ref{sec:tests} use only the confirmation set.}
+
+\begin{figure}[!ht]
+  \figfile{\figdir f03_missingness.pdf}{9.4cm}
+  \caption{Floor area is missing for 44\% of sales, but for 95\% of condo/co-op unit sales and only
+  5\% of the rest: missing by design, not at random, so we do not impute it.}
+  \label{fig:missing}
+\end{figure}
+
+\begin{figure}[!ht]
+  \figfile{\figdir f04_year_built_heaping.pdf}{5.0cm}
+  \caption{61\% of parcels have a year built ending in 0 or 5 (20\% expected); 1940 holds 12,337
+  parcels vs 540 in 1939, so the pre-war cutoff needs a sensitivity check.}
+  \label{fig:heaping}
+\end{figure}
+
+\begin{figure}[!ht]
+  \figfile{\figdir f06_prewar_vs_newer.pdf}{9.2cm}
+  \caption{Pooled, pre-war residential buildings sell for 6.6\% more per sq ft; within the same
+  neighbourhood and type the median premium is only +1.6\% (383 cells, IQR $-6$\% to $+11$\%), near
+  the 5\% that would matter.}
+  \label{fig:prewar}
+\end{figure}
+
+\begin{figure}[!ht]
+  \figfile{\figdir f10_toll_zone.pdf}{6.6cm}
+  \caption{Counting each deal once, 2024--25 median prices rose 1.6\% inside the toll zone vs
+  6.6\% outside; counting every lot of multi-lot deals would show $+10.4$\% vs $+5.1$\%, driven by
+  one \$170M deal repeated on 280 lots.}
+  \label{fig:toll}
+\end{figure}
+
+\minihead{Basic questions}
+\begin{enumerate}[label=\arabic*.]
+  \item Is Manhattan the most expensive borough? By median deal price yes (\$1.2M vs
+  \$514K--\$885K), though the price ranges overlap heavily.
+  \item Do bigger homes cost more? Yes, moderately: Spearman $\rho=0.49$ for 1--3 family homes.
+  \item Have prices risen since 2016? Yes, in every borough: +22\% in Manhattan, +48--71\% elsewhere.
+  \item Which neighbourhood is priciest per sq ft? Greenwich Village-West, \$2,020.
+\end{enumerate}
+
+\minihead{Our problem statements}
+\noindent\fbox{\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+\textbf{P1 (primary).} Within the same neighbourhood and building type, do pre-war buildings
+(built before 1940) sell for more per square foot than newer ones?
+
+\smallskip
+\textbf{P2.} After the July 2019 mansion-tax step at \$2M, do more residential deals land just
+below \$2M than before?
+
+\smallskip
+\textbf{P3.} Holding building type fixed, does the share of \$0--\$100 ownership transfers differ
+between boroughs?
+
+\smallskip
+\textbf{P4.} Within the same neighbourhood and building type, do buildings with shops sell at a
+different price per square foot from purely residential ones?
+\end{minipage}}
+
+\lab{How they are novel:}{the basic questions read one column against price, and with 250K rows
+any such gap is ``significant''. Ours compare like with like: the same neighbourhood and type (P1,
+P4), the same building mix (P3), or the same narrow price window before and after a tax change,
+with placebo windows where the tax did not change (P2). Each needs columns no raw row records
+(price per sq ft, a pre-war flag, deal-level prices, a price class, a mixed-use flag).}
+
+\lab{Correlation is not causation:}{P2 has a causal flavour: the tax pushed prices under \$2M. Two
+things support that reading: the comparison is with the same window before the tax, and windows
+at \$1.5M and \$2.5M, where the tax did not step, act as placebos. It still cannot tell a real price
+cut from money moved off the deed (furniture, closing credits). P1, P3 and P4 are associations:
+pre-war buildings may also differ in renovation, and mixed-use buildings sit on busier streets.}
+
+\lab{Hypotheses we dropped:}{COVID and Manhattan prices (too few Manhattan per-sq-ft sales), the
+congestion toll (no stable pre-toll trend; Section~6), new buildings (too few sales), and pooled
+questions such as tax class by borough or older vs newer citywide, which any test would reject.}
+
+%-----------------------------------------------------------------------
+\section{Statistical inferences}\label{sec:tests}
+
+\lab{Rows tested:}{only the confirmation set (252,178 rows), with every hypothesis, test and
+threshold fixed in \code{reports/test\_plan.md} before the tests were run. All tests are from the
+course (z, t, paired t, F and $\chi^2$); $\alpha=0.05$. Fig.~\ref{fig:tests} shows every estimate
+against the size that would matter.}
+
+\begin{figure}[!ht]
+  \figfile{\figdir f13_test_results.pdf}{10.2cm}
+  \caption{Estimates with 95\% CIs; shaded = smaller than the size that matters. Only T2 at \$2M,
+  T4, and Bronx / Staten Island in T3 clear it; the pre-war premium (T1) does not.}
+  \label{fig:tests}
+\end{figure}
+
+%------------------------------------------------------------ Test 1
+\subsection*{Test 1 (P1): do pre-war buildings sell for more per sq ft, like for like?}
+
+\tpart{a}{Hypotheses, written before running the test}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+$H_0$ & $\mu_d=0$ \\
+$H_1$ & $\mu_d>0$ \\
+Significance level & $\alpha=0.05$ \\
+Side & one-sided (right) \\
+Test & paired t-test \\
+Smallest difference that matters & 5\% ($\mu_d=\ln 1.05=0.049$) \\
+\bottomrule
+\end{tabularx}}
+
+$d$ = mean log \$/sq ft of pre-war minus newer sales in one neighbourhood $\times$ building-type
+cell (1--3 family and rental buildings; cells with $\ge5$ of each). One-sided, because P1 claims a
+premium. 5\%, because a smaller gap is lost in normal price negotiation.
+
+\tpart{b}{Other tests we considered}
+Each cell is a matched pair (same place, same type), $\sigma$ is unknown, and 367 cells make the
+mean difference near normal: a paired t-test. Pairing removes location, which drives most of the
+raw gap (Fig.~\ref{fig:prewar}).
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{2.4cm} Y@{}}
+\toprule
+\textbf{Also considered} & \textbf{Why we did not use it} \\
+\midrule
+Welch two-sample t on all sales & ignores neighbourhood, so it measures location mix. Run anyway: +7.1\% (6.3\% to 8.0\%), $t=16.75$, d.f.\ $=71{,}025$, $p<10^{-60}$. \\
+Pooled two-sample t & needs equal variances; the F-test rejects them ($F=1.60$, d.f.\ $(39{,}876; 31{,}158)$, $p<0.001$). \\
+z-test for two means & needs the population $\sigma$, which we do not know \\
+t-test on the correlation of year built with \$/sq ft & sees only a straight-line trend over all years, not the pre-war contrast, and ignores location \\
+\bottomrule
+\end{tabularx}}
+
+\tpart{c}{Result}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+Estimate & +0.43\% (367 cells, 58,139 sales) \\
+95\% confidence interval & $-1.68$\% to $+2.58$\% \\
+Test statistic (d.f.) & $t=0.394$ (366) \\
+p-value & 0.35 \\
+Decision & do not reject $H_0$ \\
+\bottomrule
+\end{tabularx}}
+
+Like for like, there is no pre-war premium: the whole interval lies inside $\pm5$\%. The 7.1\%
+pooled gap is location and building mix, not age. Without year built 1935--1945 (the heaping at
+1940) the estimate is +2.1\% (95\% CI $-0.3$\% to $+4.5$\%, $t=1.70$, d.f.\ 346, $p=0.045$):
+borderline significant, still below what matters.
+
+%------------------------------------------------------------ Test 2
+\subsection*{Test 2 (P2): did the 2019 mansion tax push deals just below \$2M?}
+
+\tpart{a}{Hypotheses, written before running the test}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+$H_0$ & $p_{\text{post}}=p_{\text{pre}}$ \\
+$H_1$ & $p_{\text{post}}>p_{\text{pre}}$ \\
+Significance level & $\alpha=0.05$ \\
+Side & one-sided (right) \\
+Test & z-test for two proportions (pooled) \\
+Smallest difference that matters & 10 percentage points \\
+\bottomrule
+\end{tabularx}}
+
+$p$ = share of residential deals (tax class 1--2, one row per deal) within 2.5\% of \$2M that are
+below \$2M; pre = 2016--18, post = 2020--25, 2019 dropped (contracts signed before April kept the
+old rules). Since July 2019 crossing \$2M raises the tax on the whole price (about \$5,000), and
+the tax only rewards being below, so the test is one-sided. 10 pp is about one buyer in ten moving
+their price for the tax.
+
+\tpart{b}{Other tests we considered}
+Two independent groups of deals, a yes/no outcome and counts in the hundreds (all four cells
+$\ge15$): a z-test for two proportions, with the rate pooled because $H_0$ says both periods share
+one.
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{2.4cm} Y@{}}
+\toprule
+\textbf{Also considered} & \textbf{Why we did not use it} \\
+\midrule
+$\chi^2$ test of independence (2$\times$2) & same evidence but two-sided only. Run anyway: $\chi^2=54.85=z^2$, d.f.\ 1, $p<10^{-12}$. \\
+z-test for one proportion vs 50\% & 50/50 is arbitrary: round prices at exactly \$2,000,000 make the pre-tax split uneven, so the pre-period is the right baseline \\
+\bottomrule
+\end{tabularx}}
+
+\tpart{c}{Result}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+Estimate & 47.0\% (157/334) $\rightarrow$ 69.6\% (673/967): +22.6 pp \\
+95\% confidence interval & +16.5 to +28.7 pp \\
+Test statistic & $z=7.41$ \\
+p-value & $6.5\times10^{-14}$ \\
+Decision & reject $H_0$ \\
+\bottomrule
+\end{tabularx}}
+
+After the tax, deals pile up just below \$2M, and the whole interval is above the 10 pp that
+matters. The placebos behave as they should: at \$1.5M (+1.7 pp, $p=0.25$) and \$2.5M (+0.5 pp,
+$p=0.45$), where the tax did not change, nothing moved. At \$3M, the next tax step, the share rose
+17.5 pp (95\% CI +9.8 to +25.3, $z=4.43$, $p<10^{-5}$).
+
+%------------------------------------------------------------ Test 3
+\subsection*{Test 3 (P3): do boroughs differ in \$0 transfers once building type is fixed?}
+
+\tpart{a}{Hypotheses, written before running the test}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+$H_0$ & $O_b=E_b$ for every borough \\
+$H_1$ & at least one borough differs \\
+Significance level & $\alpha=0.05$ \\
+Side & upper tail of $\chi^2$ \\
+Test & $\chi^2$ goodness of fit, d.f.\ $=5-1=4$ \\
+Smallest difference that matters & 2 pp from a borough's expected share \\
+\bottomrule
+\end{tabularx}}
+
+$O_b$ = \$0--\$100 transfers in borough $b$; $E_b=\sum_c r_c\,n_{bc}$, where $r_c$ is the citywide
+transfer rate of building category $c$ and $n_{bc}$ the deeds of that category in borough $b$. So
+$E_b$ is what the borough's building mix alone predicts.
+
+\tpart{b}{Other tests we considered}
+The data are counts in five categories compared with a predicted split: goodness of fit. Building
+$E_b$ from category rates is what holds building type fixed.
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{2.4cm} Y@{}}
+\toprule
+\textbf{Also considered} & \textbf{Why we did not use it} \\
+\midrule
+$\chi^2$ test of independence, borough $\times$ transfer & mixes building type into the borough effect. Run anyway: $\chi^2=4{,}473$, d.f.\ 4, raw shares 21.1\% (Manhattan) to 37.7\% (Brooklyn), a 16.6 pp spread. \\
+z-tests for two proportions, pair by pair & 10 pairs means 10 more tests and 10 more chances of a false alarm \\
+$\chi^2$ test of independence inside each building category & holds type fixed too, but means 47 separate tests and many categories with tiny counts \\
+\bottomrule
+\end{tabularx}}
+
+\tpart{c}{Result}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+Test statistic (d.f.) & $\chi^2=461.3$ (4); smallest $E_b=7{,}873$ \\
+p-value & $<10^{-90}$ \\
+Decision & reject $H_0$ \\
+Observed minus expected & Bronx $-4.9$ pp ($-5.5$ to $-4.3$), Staten Island $-5.5$ ($-6.1$ to $-4.9$), Brooklyn $+2.0$ ($+1.6$ to $+2.3$), Queens $+1.4$ ($+1.1$ to $+1.7$), Manhattan $-0.2$ ($-0.5$ to $+0.2$) \\
+\bottomrule
+\end{tabularx}}
+
+Holding building type fixed changes the story. Manhattan's low raw share (21.1\%) is fully
+explained by what sells there (condos and co-ops): it sits 0.2 pp from its expectation. The gaps
+that matter are in the Bronx and Staten Island, with about 5 pp \emph{fewer} transfers than their
+building mix predicts. Expected counts use rates from the same data, so d.f.\ $=4$ is approximate.
+
+%------------------------------------------------------------ Test 4
+\subsection*{Test 4 (P4): do buildings with shops sell at a different price per sq ft?}
+
+\tpart{a}{Hypotheses, written before running the test}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+$H_0$ & $\mu_d=0$ \\
+$H_1$ & $\mu_d\ne0$ \\
+Significance level & $\alpha=0.05$ \\
+Side & two-sided \\
+Test & paired t-test \\
+Smallest difference that matters & 5\% either way \\
+\bottomrule
+\end{tabularx}}
+
+$d$ = mean log \$/sq ft of buildings with commercial units minus purely residential ones, per
+neighbourhood $\times$ type cell ($\ge3$ of each; mixed-use sales are rare). Two-sided: shops can
+add rent (premium) or noise and traffic (discount).
+
+\tpart{b}{Other tests we considered}
+The same matched design as Test~1: one pair per cell, $\sigma$ unknown, 225 cells.
+{\footnotesize
+\begin{tabularx}{\linewidth}{@{}L{2.4cm} Y@{}}
+\toprule
+\textbf{Also considered} & \textbf{Why we did not use it} \\
+\midrule
+Welch two-sample t on all sales & mixed-use buildings sit on commercial streets in other neighbourhoods. Run anyway: $-9.3$\% ($-11.9$\% to $-6.7$\%), $t=-6.79$, d.f.\ 3,370. \\
+Pooled two-sample t & the F-test rejects equal variances ($F=2.23$, $p<0.001$) \\
+t-test on the correlation of commercial units with \$/sq ft & linear only, and most buildings have 0 or 1 commercial unit \\
+\bottomrule
+\end{tabularx}}
+
+\tpart{c}{Result}
+{\small
+\begin{tabularx}{\linewidth}{@{}K{3.4cm} Y@{}}
+\toprule
+Estimate & $-15.5$\% (225 cells, 41,093 sales) \\
+95\% confidence interval & $-19.5$\% to $-11.2$\% \\
+Test statistic (d.f.) & $t=-6.74$ (224) \\
+p-value & $1.3\times10^{-10}$ \\
+Decision & reject $H_0$ \\
+\bottomrule
+\end{tabularx}}
+
+Buildings with shops sell for about 15\% less per sq ft than purely residential buildings of the
+same type in the same neighbourhood, and the whole interval is beyond 5\%. Ignoring neighbourhood
+understates it ($-9.3$\%), because mixed-use buildings are more common in pricier areas.
+
+%-----------------------------------------------------------------------
+\section{Limitations}
+
+\begin{itemize}
+  \item \textbf{Association, not cause}, for P1, P3 and P4. In P4, gross floor area includes the
+  shop space, which may simply be valued lower than homes. P2's placebos support a tax effect, but
+  cannot rule out money moved off the deed.
+  \item \textbf{The toll question was not tested.} Before the toll, the yearly gap between inside
+  and outside the zone already swung from $+9.2$ to $-3.6$ pp (2021--24), so 2025's $-5.0$ pp cannot
+  be told apart from past movement; a before/after test would wrongly credit the toll.
+  \item \textbf{Price per sq ft covers houses and rental buildings only} (29.4\% of raw rows); condo
+  and co-op units carry no unit area, so P1 and P4 say nothing about apartments.
+  \item \textbf{Year built is an assessor estimate}, heaped on round years (Fig.~\ref{fig:heaping});
+  dropping 1935--1945 moves T1 from +0.4\% to +2.1\%, so ``pre-war'' carries measurement error.
+  \item \textbf{Sales are not independent.} Sales in one building, neighbourhood or month share
+  conditions. Tests 1 and 4 work on cells to soften this; Tests 2 and 3 treat deals as independent,
+  so their p-values are somewhat optimistic.
+  \item \textbf{Judgement calls.} The \$100 and \$10,000 cut-offs, the multi-lot rule, the 2.5\%
+  window and the minimum cell sizes were fixed before testing but are still choices.
+  \item \textbf{Only properties that sold} are in the data; they may differ from the housing stock
+  as a whole.
+\end{itemize}
+
+\end{document}
