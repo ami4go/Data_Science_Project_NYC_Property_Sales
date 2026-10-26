@@ -11,7 +11,7 @@
 | Original download | `https://data.cityofnewyork.us/api/views/w2pb-icbu/rows.csv?accessType=DOWNLOAD` |
 | Downloaded | 2026-10-20 09:33 UTC (dataset last modified 2026-06-09) |
 | Frozen file | `data/raw/NYC_Citywide_Annualized_Calendar_Sales_Update.csv`, 155,795,191 bytes |
-| Frozen copy for re-running | **TODO: link to the CSV attached to this repo's GitHub release** (the file is over GitHub's 100 MB limit for normal commits) |
+| Frozen copy for re-running | [`data/raw/NYC_Citywide_Annualized_Calendar_Sales_Update.zip`](https://github.com/ami4go/Data_Science_Project_NYC_Property_Sales/blob/main/data/raw/NYC_Citywide_Annualized_Calendar_Sales_Update.zip) (36 MB, in this repo; the unzipped CSV is too big for GitHub) |
 | SHA-256 | `cf8d76c13ed5774c6a04193147c24ebf3f3e118cd2b10eefc096c6d0800c24a8` (also in `data/raw/SHA256.txt`) |
 | Shape | 845,607 rows x 29 columns; sales dated 2016-01-01 to 2025-12-31 |
 | One row | one recorded property sale (deed), one tax lot |
@@ -21,7 +21,7 @@ The city keeps updating this dataset, so **use the frozen copy**, not a new down
 
 ## How to reproduce
 
-Put the frozen CSV in `data/raw/`, then:
+Unzip the frozen data in place (`data/raw/NYC_Citywide_Annualized_Calendar_Sales_Update.zip` -> `data/raw/NYC_Citywide_Annualized_Calendar_Sales_Update.csv`; with Python: `python -m zipfile -e data/raw/NYC_Citywide_Annualized_Calendar_Sales_Update.zip data/raw/`), then:
 
 ```bash
 pip install -r requirements.txt
@@ -225,5 +225,5 @@ Raw-column profile (blanks, zeros, commas, unique values): `reports/raw_profile.
 | Raghav (2024450) | Dataset, raw audit and size check (Section 1); README | `README.md`, `src/common.py`, `src/01_audit_raw.py`, `requirements.txt`, `.gitignore`, `data/raw/*.txt`, `reports/raw_profile.csv`, `reports/raw_problems.csv` |
 | Amit (2024064) | Cleaning, multi-lot rule and the 70/30 split; before and after (Sections 2, 3) | `src/02_clean.py`, `src/03_split.py`, `src/04_tables.py`, `reports/cleaning_log.csv`, `split_strata.csv`, `ppsf_fences.csv`, `before_after.csv`, `analysis_funnel.csv`, `multi_lot_null_model.csv`, `size_check.md`, `data_dictionary.md`, `figures/f00*` |
 | Harsh (2024236) | EDA figures and problem statements (Section 4) | `src/05_eda.py`, `figures/f01`-`f12`, `reports/eda_findings.md` |
-| Bhudheep (2024154) | Test plan; Tests 1-2: pre-war premium and mansion tax (Section 5) | `reports/test_plan.md`, `src/06_tests.py` |
+| Bhudeep (2024154) | Test plan; Tests 1-2: pre-war premium and mansion tax (Section 5) | `reports/test_plan.md`, `src/06_tests.py` |
 | Parth (2024406) | Tests 3-4: transfers and mixed use; limitations and report (Sections 5, 6) | `reports/test_results.*`, `figures/f13*`, `run_all.py`, `reports/run_log.txt`, `report/main.tex`, `report/main.pdf` |
